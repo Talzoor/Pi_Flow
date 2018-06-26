@@ -89,6 +89,7 @@ def main():
                 if not str_to_write == '':
                     print(str_to_write)
                     file_write(str_to_write)
+            sleep(1.0/1000.0)   #1mS
             pass
 
     except KeyboardInterrupt:
