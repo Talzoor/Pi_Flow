@@ -3,13 +3,18 @@ import RPi.GPIO as GPIO
 from time import sleep
 from datetime import datetime
 import sys
-global f_count, time_now, time_start, pulse_flag
+import os
 
+#global pulse_count, time_now, time_start, pulse_flag
+
+script_path = os.path.dirname(os.path.realpath(__file__))
 file_name = 'water_flow_readings.txt'
+full_file_name = '{}/{}'.format(script_path, file_name)
 flow_pin = 14
 
 print('Hello!!, GPIO:{}'.format(GPIO.VERSION))
 print('Python:{}'.format(sys.version))
+print('Script path:{}, file:{}'.format(script_path, full_file_name))
 
 def init_vars():
     global pulse_count, time_now, time_start, pulse_flag, time_last_pulse
@@ -21,8 +26,8 @@ def init_vars():
     file_write('---Started:{}---'.format(datetime.now()))
 
 def file_write(str_in):
-    global file_name
-    fb = open(file_name, 'a+')
+    global full_file_name
+    fb = open(full_file_name, 'a+')
     fb.write('{}\n'.format(str_in))
     fb.close()
 
