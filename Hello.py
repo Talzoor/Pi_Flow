@@ -6,6 +6,7 @@ import sys
 global f_count, time_now, time_start, pulse_flag
 
 file_name = 'water_flow_readings.txt'
+flow_pin = 14
 
 print('Hello!!, GPIO:{}'.format(GPIO.VERSION))
 print('Python:{}'.format(sys.version))
@@ -17,6 +18,7 @@ def init_vars():
     time_start = 0
     time_last_pulse = 0
     pulse_flag = False
+    file_write('---Started:{}---'.format(datetime.now()))
 
 def file_write(str_in):
     global file_name
@@ -25,7 +27,7 @@ def file_write(str_in):
     fb.close()
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(14, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(flow_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 def flow_count(var):
     global pulse_count, time_start, pulse_flag, time_last_pulse
@@ -82,15 +84,6 @@ def main():
                 if not str_to_write == '':
                     print(str_to_write)
                     file_write(str_to_write)
-            #sleep(0.5)
-
-
-            #print('t:{}'.format(elapsed))
-            #print("-", end='')
-            #i+=1
-            #if i>40:
-            #    i=0
-            #    print('')
             pass
 
     except KeyboardInterrupt:
