@@ -22,7 +22,7 @@
             {
                 if(rawFile.status === 200 || rawFile.status == 0)
                 {
-                    allText = rawFile.responseText;
+                    var allText = rawFile.responseText;
                     allText = allText.replace(/(?:\r\n|\r|\n)/g, '<br><br>');
                     document.getElementById("main").innerHTML = allText;
                     //alert(allText);
