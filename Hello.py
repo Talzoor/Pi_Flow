@@ -4,6 +4,19 @@ from time import sleep
 from datetime import datetime
 import sys
 import os
+from peewee import *
+
+db = SqliteDatabase('Readings.db')
+
+
+class Pulse_data(Model):
+    Date = DateField()
+    Time = TimeField()
+    Pulses = IntegerField()
+    elapsed = TimeField()
+
+    class Meta:
+        database = db
 
 #global pulse_count, time_now, time_start, pulse_flag
 
@@ -16,6 +29,13 @@ print('Hello!!, GPIO:{}'.format(GPIO.VERSION))
 print('Python:{}'.format(sys.version))
 print('Script path:{}, file:{}'.format(script_path, full_file_name))
 
+def init_db():
+    db.connect()
+    #db.create_tables([Pulse_data])
+    #exam = Pulse_data(Date='29/06/2018', Time='10:43:10', Pulses=6210, elapsed='00:01:10')
+    #print('database saved')
+    #exam.save()
+
 def init_vars():
     global pulse_count, time_now, time_start, pulse_flag, time_last_pulse
     pulse_count = 0
@@ -25,14 +45,20 @@ def init_vars():
     pulse_flag = False
     file_write('---Started:{}---'.format(datetime.now()))
 
+def init_GPIO():
+    global flow_pin
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(flow_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
 def file_write(str_in):
     global full_file_name
     fb = open(full_file_name, 'a+')
     fb.write('{}\n'.format(str_in))
     fb.close()
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(flow_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+def db_read():
+    for pulse in Pulse_data.select():
+        print(pulse.Time)
 
 def flow_count(var):
     global pulse_count, time_start, pulse_flag, time_last_pulse
@@ -68,6 +94,7 @@ def main():
         time_last_pulse, \
         pulse_running
 
+    db_read()
     # i = 0
     pulse_running = False
     try:
@@ -103,4 +130,6 @@ def main():
 
 if __name__ == '__main__':
     init_vars()
+    init_GPIO()
+    init_db()
     main()
