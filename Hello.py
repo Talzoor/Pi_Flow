@@ -33,15 +33,15 @@ print('Script:{}, file:{}'.format(script_path, full_file_name))
 def init_db():
     db.connect()
     db.create_tables([Pulse_data])
-    exam = Pulse_data(Date='25/06/2018', Time='23:43:00', Pulses=610, elapsed='00:02:12')
-    exam1 = Pulse_data(Date='26/06/2018', Time='18:43:56', Pulses=6210, elapsed='00:20:10')
-    exam2 = Pulse_data(Date='29/06/2018', Time='11:43:10', Pulses=1222, elapsed='00:00:53')
+    #exam = Pulse_data(Date='25/06/2018', Time='23:43:00', Pulses=610, elapsed='00:02:12')
+    #exam1 = Pulse_data(Date='26/06/2018', Time='18:43:56', Pulses=6210, elapsed='00:20:10')
+    #exam2 = Pulse_data(Date='29/06/2018', Time='11:43:10', Pulses=1222, elapsed='00:00:53')
 
     #print('database saved')
-    exam.save()
-    exam1.save()
-    exam2.save()
-    print('examples saved!')
+    #exam.save()
+    #exam1.save()
+    #exam2.save()
+    #print('examples saved!')
 
 def init_vars():
     global pulse_count, time_now, time_start, pulse_flag, time_last_pulse
