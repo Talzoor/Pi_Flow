@@ -96,7 +96,7 @@ def sum_flow_event():
     global pulse_running, time_start, time_last_pulse, pulse_count
     pulse_running = False
     elapsed = time_last_pulse - time_start
-    elapsed = elapsed.strftime('%H:%M:%S')
+    elapsed = str(elapsed).split('.', 2)[0]
     # print('Pulses:{}, Time:{}'.format(pulse_count, elapsed))
     _time_now = datetime.now()
     time_date = _time_now.date()
