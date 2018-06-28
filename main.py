@@ -96,6 +96,7 @@ def sum_flow_event():
     global pulse_running, time_start, time_last_pulse, pulse_count
     pulse_running = False
     elapsed = time_last_pulse - time_start
+    elapsed = elapsed.strftime('%H:%M:%S')
     # print('Pulses:{}, Time:{}'.format(pulse_count, elapsed))
     _time_now = datetime.now()
     time_date = _time_now.date()
@@ -144,6 +145,7 @@ def main():
                     db_pulse_write(p_date, p_time, p_count, p_elpd)
 
             sleep(1.0/1000.0)   #1mS
+            sys.stdout.flush()
             pass
 
     except KeyboardInterrupt:
