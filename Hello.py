@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 import RPi.GPIO as GPIO
 from time import sleep
 from datetime import datetime
@@ -56,9 +56,10 @@ def file_write(str_in):
     fb.write('{}\n'.format(str_in))
     fb.close()
 
-def db_read():
-    for pulse in Pulse_data.select():
-        print(pulse.Time)
+def db_read_all():
+    pass
+#    for pulse in Pulse_data.select():
+#        print(pulse.Date, pulse.Time, pulse.Pulses, pulse.elapsed)
 
 def flow_count(var):
     global pulse_count, time_start, pulse_flag, time_last_pulse
@@ -94,7 +95,7 @@ def main():
         time_last_pulse, \
         pulse_running
 
-    db_read()
+    db_read_all()
     # i = 0
     pulse_running = False
     try:
@@ -127,6 +128,7 @@ def main():
 
     finally:
         GPIO.cleanup()  # this ensures a clean exit
+        db.close()
 
 if __name__ == '__main__':
     init_vars()
