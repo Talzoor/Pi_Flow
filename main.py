@@ -7,6 +7,13 @@ import sys
 import os
 from peewee import *
 
+script_path = os.path.dirname(os.path.realpath(__file__))
+file_name = 'water_flow_readings.txt'
+full_file_name = '{}/{}'.format(script_path, file_name)
+flow_pin = 14
+
+db = SqliteDatabase('{}/Readings.db'.format(script_path)
+                    , check_same_thread=False)
 
 class Pulse_data(Model):
     Date = DateField()
@@ -19,13 +26,7 @@ class Pulse_data(Model):
 
 #global pulse_count, time_now, time_start, pulse_flag
 
-script_path = os.path.dirname(os.path.realpath(__file__))
-file_name = 'water_flow_readings.txt'
-full_file_name = '{}/{}'.format(script_path, file_name)
-flow_pin = 14
 
-db = SqliteDatabase('{}/Readings.db'.format(script_path)
-                    , check_same_thread=False)
 
 print('Main running, GPIO:{}'.format(GPIO.VERSION))
 print('Python:{}'.format(sys.version))
