@@ -27,11 +27,6 @@ class Pulse_data(Model):
 #global pulse_count, time_now, time_start, pulse_flag
 
 
-
-print('Main running, GPIO:{}'.format(GPIO.VERSION))
-print('Python:{}'.format(sys.version))
-print('Script:{}, file:{}'.format(script_path, full_file_name))
-
 def init_db():
     res = db.connect()
     print('DB connection:{}'.format(res))
@@ -107,8 +102,13 @@ def sum_flow_event():
 
     return time_date, time_time, tmp_pulse_count, elapsed
 
+def print_header():
+    print('--- Main started ({}) ---'.format(datetime.now().strftime('%Y-%m-%d  %H:%M:%S')))
+    print('GPIO:{}, Python:{}'.format(GPIO.VERSION, sys.version))
+    print('file:{}'.format(full_file_name))
 
 def main():
+    print_header()
     global pulse_count, \
         time_now, \
         time_start, \
