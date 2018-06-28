@@ -33,7 +33,9 @@ print('Python:{}'.format(sys.version))
 print('Script:{}, file:{}'.format(script_path, full_file_name))
 
 def init_db():
-    db.connect()
+    res = db.connect()
+    print('DB connection:{}'.format(res))
+    db.close()
 
 def init_vars():
     global pulse_count, time_now, time_start, pulse_flag, time_last_pulse
