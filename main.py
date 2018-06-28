@@ -32,16 +32,6 @@ print('Script:{}, file:{}'.format(script_path, full_file_name))
 
 def init_db():
     db.connect()
-    db.create_tables([Pulse_data])
-    #exam = Pulse_data(Date='25/06/2018', Time='23:43:00', Pulses=610, elapsed='00:02:12')
-    #exam1 = Pulse_data(Date='26/06/2018', Time='18:43:56', Pulses=6210, elapsed='00:20:10')
-    #exam2 = Pulse_data(Date='29/06/2018', Time='11:43:10', Pulses=1222, elapsed='00:00:53')
-
-    #print('database saved')
-    #exam.save()
-    #exam1.save()
-    #exam2.save()
-    #print('examples saved!')
 
 def init_vars():
     global pulse_count, time_now, time_start, pulse_flag, time_last_pulse
@@ -57,11 +47,28 @@ def init_GPIO():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(flow_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+def first_db_write():
+    db.create_tables([Pulse_data])
+    exam = Pulse_data(Date='25/06/2018', Time='23:43:00', Pulses=610, elapsed='00:02:12')
+    exam1 = Pulse_data(Date='26/06/2018', Time='18:43:56', Pulses=6210, elapsed='00:20:10')
+    exam2 = Pulse_data(Date='29/06/2018', Time='11:43:10', Pulses=1222, elapsed='00:00:53')
+    exam.save()
+    exam1.save()
+    exam2.save()
+    print('examples saved!')
+    pass
+
 def file_write(str_in):
     global full_file_name
     fb = open(full_file_name, 'a+')
     fb.write('{}\n'.format(str_in))
     fb.close()
+
+def db_pulse_write(_date, _time, _count, _elapsed):
+    db.create_tables([Pulse_data])
+    pulse = Pulse_data(Date=_date, Time=_time, Pulses=_count, elapsed=_elapsed)
+    pulse.save()
+    pass
 
 def db_read_all():
     pass
@@ -81,17 +88,17 @@ def flow_count(var):
 
 def sum_flow_event():
     global pulse_running, time_start, time_last_pulse, pulse_count
-    str_out = ''
     pulse_running = False
     elapsed = time_last_pulse - time_start
     # print('Pulses:{}, Time:{}'.format(pulse_count, elapsed))
+    _time_now = datetime.now()
+    time_date = _time_now.date()
+    time_time = _time_now.time().strftime('%H:%M:%S')
 
-    if pulse_count > 2:
-        str_out = 'Time:{}, Pulses:{}, elapsed:{}'.format(datetime.now(), pulse_count, elapsed)
-
+    tmp_pulse_count = pulse_count
     pulse_count = 0
 
-    return str_out
+    return time_date, time_time, tmp_pulse_count, elapsed
 
 
 def main():
@@ -120,10 +127,16 @@ def main():
 
             #print('no_p_c:{}'.format(no_pulse_count))
             if no_pulse_count == 2000 and pulse_running==True:
-                str_to_write = sum_flow_event()
-                if not str_to_write == '':
+                p_date, p_time, p_count, p_elpd = sum_flow_event()
+
+                if p_count > 2:
+                    str_to_write = 'Time:{} {}, Pulses:{}, elapsed:{}'.format(
+                        p_date, p_time, p_count, p_elpd)
                     print(str_to_write)
+
                     file_write(str_to_write)
+                    db_pulse_write(p_date, p_time, p_count, p_elpd)
+
             sleep(1.0/1000.0)   #1mS
             pass
 
