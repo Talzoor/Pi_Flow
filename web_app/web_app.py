@@ -1,21 +1,12 @@
 from flask import Flask
 from flask_admin import Admin
-from flask_peewee.db import Database
-from flask_peewee.auth import Auth
-from peewee import *
-import datetime
-# create an Auth object for use with our flask app and database wrapper
+from flask_admin.contrib.peewee import ModelView
 
-
-DATABASE_NAME = './Readings.db'
+import Hello
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'tz'
 
-@app.route('/')
-def index():
-    return 'NiceLy....'
-
-
-if __name__ == '__main__':
-
-    app.run(debug=True, host='0.0.0.0')
+admin = Admin(app, name='HydroPi', template_mode='bootstrap3', url='/')
+admin.add_view(ModelView(Hello.Pulse_data))
+# Add administrative views here

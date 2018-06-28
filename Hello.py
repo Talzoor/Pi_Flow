@@ -1,4 +1,5 @@
 
+#TODO = change name to main.py!
 import RPi.GPIO as GPIO
 from time import sleep
 from datetime import datetime
@@ -6,7 +7,7 @@ import sys
 import os
 from peewee import *
 
-db = SqliteDatabase('Readings.db')
+db = SqliteDatabase('Readings.db', check_same_thread=False)
 
 
 class Pulse_data(Model):
@@ -25,9 +26,9 @@ file_name = 'water_flow_readings.txt'
 full_file_name = '{}/{}'.format(script_path, file_name)
 flow_pin = 14
 
-print('Hello!!, GPIO:{}'.format(GPIO.VERSION))
+print('Main running, GPIO:{}'.format(GPIO.VERSION))
 print('Python:{}'.format(sys.version))
-print('Script path:{}, file:{}'.format(script_path, full_file_name))
+print('Script:{}, file:{}'.format(script_path, full_file_name))
 
 def init_db():
     db.connect()
@@ -66,7 +67,7 @@ def flow_count(var):
     time_last_pulse = datetime.now()
     if pulse_count == 0 : time_start = time_last_pulse
     pulse_flag = True
-    pulse_count+=1
+    pulse_count += 1
 
     #print('{:5d}'.format(pulse_count), end='')
     #if pulse_count%10 == 0:
