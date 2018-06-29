@@ -8,5 +8,5 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'tz'
 
 admin = Admin(app, name='HydroPi', template_mode='bootstrap3', url='/')
-admin.add_view(ModelView(main.Pulse_data))
+admin.add_view(ModelView(main.PulseData))
 # Add administrative views here
