@@ -17,7 +17,7 @@ db = SqliteDatabase('{}/Readings.db'.format(script_path)
 
 
 class PulseData(Model):
-    #can_delete = True
+    # can_delete = True
     Date = DateField()
     Time = TimeField()
     Pulses = IntegerField()
