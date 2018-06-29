@@ -17,7 +17,7 @@ db = SqliteDatabase('{}/Readings.db'.format(script_path)
 
 
 class PulseData(Model):
-    #  scan_delete = True
+    # can_delete = True
     Date = DateField()
     Time = TimeField()
     Pulses = IntegerField()
@@ -29,7 +29,9 @@ class PulseData(Model):
 #global pulse_count, time_now, time_start, pulse_flag
 
 
-def init_db():    print('DB connection:{}'.format(res))
+def init_db():
+    res = db.connect()
+    print('DB connection:{}'.format(res))
     db.close()
 
 def init_vars():
@@ -108,7 +110,6 @@ def print_header():
     print('file:{}'.format(full_file_name))
 
 def main():
-    print_header()
     global pulse_count, \
         time_now, \
         time_start, \
@@ -159,6 +160,7 @@ def main():
         db.close()
 
 if __name__ == '__main__':
+    print_header()
     init_vars()
     init_GPIO()
     init_db()
