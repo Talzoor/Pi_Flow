@@ -15,7 +15,10 @@ flow_pin = 14
 db = SqliteDatabase('{}/Readings.db'.format(script_path)
                     , check_same_thread=False)
 
-class Pulse_data(Model):
+
+class PulseData(Model):
+    can_delete = True
+
     Date = DateField()
     Time = TimeField()
     Pulses = IntegerField()
@@ -47,10 +50,10 @@ def init_GPIO():
     GPIO.setup(flow_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 def first_db_write():
-    db.create_tables([Pulse_data])
-    exam = Pulse_data(Date='25/06/2018', Time='23:43:00', Pulses=610, elapsed='00:02:12')
-    exam1 = Pulse_data(Date='26/06/2018', Time='18:43:56', Pulses=6210, elapsed='00:20:10')
-    exam2 = Pulse_data(Date='29/06/2018', Time='11:43:10', Pulses=1222, elapsed='00:00:53')
+    db.create_tables([PulseData])
+    exam = PulseData(Date='25/06/2018', Time='23:43:00', Pulses=610, elapsed='00:02:12')
+    exam1 = PulseData(Date='26/06/2018', Time='18:43:56', Pulses=6210, elapsed='00:20:10')
+    exam2 = PulseData(Date='29/06/2018', Time='11:43:10', Pulses=1222, elapsed='00:00:53')
     exam.save()
     exam1.save()
     exam2.save()
@@ -65,15 +68,15 @@ def file_write(str_in):
 
 def db_pulse_write(_date, _time, _count, _elapsed):
     db.connect()
-    db.create_tables([Pulse_data])
-    pulse = Pulse_data(Date=_date, Time=_time, Pulses=_count, elapsed=_elapsed)
+    db.create_tables([PulseData])
+    pulse = PulseData(Date=_date, Time=_time, Pulses=_count, elapsed=_elapsed)
     pulse.save()
     db.close()
     pass
 
 def db_read_all():
     pass
-#    for pulse in Pulse_data.select():
+#    for pulse in PulseData.select():
 #        print(pulse.Date, pulse.Time, pulse.Pulses, pulse.elapsed)
 
 def flow_count(var):
