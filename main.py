@@ -17,7 +17,7 @@ db = SqliteDatabase('{}/Readings.db'.format(script_path)
 
 
 class PulseData(Model):
-    # can_delete = True
+    #  can_delete = True
     Date = DateField()
     Time = TimeField()
     Pulses = IntegerField()
@@ -29,9 +29,7 @@ class PulseData(Model):
 #global pulse_count, time_now, time_start, pulse_flag
 
 
-def init_db():
-    res = db.connect()
-    print('DB connection:{}'.format(res))
+def init_db():    print('DB connection:{}'.format(res))
     db.close()
 
 def init_vars():
