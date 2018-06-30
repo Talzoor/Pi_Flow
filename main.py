@@ -132,7 +132,9 @@ def main():
         pulse_running
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", help="write one DB record and exit.")
+    parser.add_argument("-c",
+                        help="write one DB record and exit.",
+                        action="store_true")
     args = parser.parse_args()
     print(args)
     db_read_all()
