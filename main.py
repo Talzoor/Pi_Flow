@@ -6,21 +6,24 @@ from datetime import datetime
 import sys
 import os
 from peewee import *
+import argparse
 
-script_path = os.path.dirname(os.path.realpath(__file__))
-file_name = 'water_flow_readings.txt'
-full_file_name = '{}/{}'.format(script_path, file_name)
-flow_pin = 14
+SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
+FILE_NAME = 'water_flow_readings.txt'
+FULL_FILE_NAME = '{}/{}'.format(SCRIPT_PATH, FILE_NAME)
+FLOW_PIN = 14
+CONST_mL_P = 1.385
 
-db = SqliteDatabase('{}/Readings.db'.format(script_path)
+
+db = SqliteDatabase('{}/Readings.db'.format(SCRIPT_PATH)
                     , check_same_thread=False)
-
 
 class PulseData(Model):
     # can_delete = True
     Date = DateField()
     Time = TimeField()
     Pulses = IntegerField()
+    Litters = FloatField()
     elapsed = TimeField()
 
     class Meta:
@@ -34,6 +37,7 @@ def init_db():
     print('DB connection:{}'.format(res))
     db.close()
 
+
 def init_vars():
     global pulse_count, time_now, time_start, pulse_flag, time_last_pulse
     pulse_count = 0
@@ -43,10 +47,12 @@ def init_vars():
     pulse_flag = False
     file_write('---Started:{}---'.format(datetime.now()))
 
+
 def init_GPIO():
-    global flow_pin
+    global FLOW_PIN
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(flow_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(FLOW_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
 
 def first_db_write():
     db.create_tables([PulseData])
@@ -59,24 +65,28 @@ def first_db_write():
     print('examples saved!')
     pass
 
+
 def file_write(str_in):
-    global full_file_name
-    fb = open(full_file_name, 'a+')
+    global FULL_FILE_NAME
+    fb = open(FULL_FILE_NAME, 'a+')
     fb.write('{}\n'.format(str_in))
     fb.close()
 
-def db_pulse_write(_date, _time, _count, _elapsed):
+
+def db_pulse_write(_date, _time, _count, _litters, _elapsed):
     db.connect()
     db.create_tables([PulseData])
-    pulse = PulseData(Date=_date, Time=_time, Pulses=_count, elapsed=_elapsed)
+    pulse = PulseData(Date=_date, Time=_time, Pulses=_count, Litters=_litters, elapsed=_elapsed)
     pulse.save()
     db.close()
     pass
+
 
 def db_read_all():
     pass
 #    for pulse in PulseData.select():
 #        print(pulse.Date, pulse.Time, pulse.Pulses, pulse.elapsed)
+
 
 def flow_count(var):
     global pulse_count, time_start, pulse_flag, time_last_pulse
@@ -88,6 +98,7 @@ def flow_count(var):
     #print('{:5d}'.format(pulse_count), end='')
     #if pulse_count%10 == 0:
     #    print('')
+
 
 def sum_flow_event():
     global pulse_running, time_start, time_last_pulse, pulse_count
@@ -104,10 +115,13 @@ def sum_flow_event():
 
     return time_date, time_time, tmp_pulse_count, elapsed
 
+
 def print_header():
     print('--- Main started ({}) ---'.format(datetime.now().strftime('%Y-%m-%d  %H:%M:%S')))
     print('GPIO:{}, Python:{}'.format(GPIO.VERSION, sys.version))
-    print('file:{}'.format(full_file_name))
+    print('file:{}'.format(FULL_FILE_NAME))
+    print('mL/P const:{}'.format(CONST_mL_P))
+
 
 def main():
     global pulse_count, \
@@ -117,13 +131,18 @@ def main():
         time_last_pulse, \
         pulse_running
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", help="write one DB record and exit.")
+    args = parser.parse_args()
+    print(args)
     db_read_all()
     # i = 0
     pulse_running = False
     try:
         GPIO.add_event_detect(14, GPIO.BOTH, callback=flow_count)
-        pulse_count=0
+        pulse_count = 0
         no_pulse_count = 0
+
         while True:
             time_now = datetime.now()
             if pulse_flag == True:
@@ -136,14 +155,15 @@ def main():
             #print('no_p_c:{}'.format(no_pulse_count))
             if no_pulse_count == 2000 and pulse_running==True:
                 p_date, p_time, p_count, p_elpd = sum_flow_event()
+                litters = sum_flow_event(p_count) * CONST_mL_P / 0.001
 
                 if p_count > 2:
-                    str_to_write = 'Time:{} {}, Pulses:{}, elapsed:{}'.format(
-                        p_date, p_time, p_count, p_elpd)
+                    str_to_write = 'Time:{} {}, Pulses:{}, Litters:{}, elapsed:{}'.format(
+                        p_date, p_time, p_count, litters, p_elpd)
                     print(str_to_write)
 
                     file_write(str_to_write)
-                    db_pulse_write(p_date, p_time, p_count, p_elpd)
+                    db_pulse_write(p_date, p_time, p_count, litters, p_elpd)
 
             sleep(1.0/1000.0)   #1mS
             sys.stdout.flush()
@@ -158,6 +178,7 @@ def main():
     finally:
         GPIO.cleanup()  # this ensures a clean exit
         db.close()
+
 
 if __name__ == '__main__':
     print_header()
