@@ -7,6 +7,8 @@ import sys
 import os
 from peewee import *
 import argparse
+import random
+
 
 SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 FILE_NAME = 'water_flow_readings.txt'
@@ -17,6 +19,7 @@ CONST_mL_P = 1.385
 
 db = SqliteDatabase('{}/Readings.db'.format(SCRIPT_PATH)
                     , check_same_thread=False)
+
 
 class PulseData(Model):
     # can_delete = True
@@ -54,15 +57,21 @@ def init_GPIO():
     GPIO.setup(FLOW_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
-def first_db_write():
+def db_write_record():
+    _time_now = datetime.now()
+    time_date = _time_now.date()
+    time_time = _time_now.time().strftime('%H:%M:%S')
+
     db.create_tables([PulseData])
-    exam = PulseData(Date='25/06/2018', Time='23:43:00', Pulses=610, elapsed='00:02:12')
-    exam1 = PulseData(Date='26/06/2018', Time='18:43:56', Pulses=6210, elapsed='00:20:10')
-    exam2 = PulseData(Date='29/06/2018', Time='11:43:10', Pulses=1222, elapsed='00:00:53')
+    _tmp_Pulses = random.randint(1, 2000)
+    exam = PulseData(Date=time_date,
+                     Time=time_time,
+                     Pulses=_tmp_Pulses,
+                     Litters=round(float(_tmp_Pulses) * CONST_mL_P * 0.001, 3),
+                     elapsed='00:99:99')
     exam.save()
-    exam1.save()
-    exam2.save()
-    print('examples saved!')
+
+    print('example saved!')
     pass
 
 
@@ -132,11 +141,13 @@ def main():
         pulse_running
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c",
+    parser.add_argument("-c", "--check",
                         help="write one DB record and exit.",
                         action="store_true")
     args = parser.parse_args()
-    print(args)
+    if args.check == True:
+        db_write_record()
+        exit(0)
     db_read_all()
     # i = 0
     pulse_running = False
