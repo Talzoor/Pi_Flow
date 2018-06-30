@@ -119,7 +119,7 @@ def sum_flow_event():
     time_date = _time_now.date()
     time_time = _time_now.time().strftime('%H:%M:%S')
 
-    tmp_pulse_count = pulse_count
+    tmp_pulse_count = int(pulse_count)
     pulse_count = 0
 
     return time_date, time_time, tmp_pulse_count, elapsed
@@ -174,7 +174,7 @@ def main():
                     str_to_write = 'Time:{} {}, Pulses:{}, Litters:{}, elapsed:{}'.format(
                         p_date, p_time, p_count, litters, p_elpd)
                     print(str_to_write)
-
+                    file_write('p_cont_type:{}'.format(type(p_count)))
                     file_write(str_to_write)
                     db_pulse_write(p_date, p_time, p_count, litters, p_elpd)
 
