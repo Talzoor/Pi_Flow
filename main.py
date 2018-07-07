@@ -169,7 +169,7 @@ def main():
             if no_pulse_count == 2000 and pulse_running==True:
                 p_date, p_time, p_count, p_elpd = sum_flow_event()
                 litters = round(float(p_count) * CONST_mL_P * 0.001, 3)
-
+                # 
                 if p_count > 2:
                     str_to_write = 'Time:{} {}, Pulses:{}, Litters:{}, elapsed:{}'.format(
                         p_date, p_time, p_count, litters, p_elpd)
