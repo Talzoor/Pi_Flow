@@ -25,6 +25,7 @@ class PulseData(Model):
     # can_delete = True
     column_default_sort = [['Date', False], ['Time', True]]
     column_sortable_list = (['Date', True], ['Time', False])
+    column_sortable_list = ('Date', 'Time')
     Date = DateField()
     Time = TimeField()
     Pulses = IntegerField()
