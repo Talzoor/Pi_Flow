@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_admin import Admin
 from flask_admin.contrib.peewee import ModelView
-from flask_admin.contrib.peewee import tools
+#from flask_admin.contrib.peewee import tools
 import main
 
 app = Flask(__name__)

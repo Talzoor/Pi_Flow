@@ -23,7 +23,8 @@ db = SqliteDatabase('{}/Readings.db'.format(SCRIPT_PATH)
 
 class PulseData(Model):
     # can_delete = True
-    column_default_sort = [['Date', True], ['Time', True]]
+    # column_default_sort = [['Date', True], ['Time', True]]
+    column_sortable_list = (['Date', True], ['Time', False])
     Date = DateField()
     Time = TimeField()
     Pulses = IntegerField()
@@ -63,7 +64,9 @@ def db_write_record():
     time_date = _time_now.date()
     time_time = _time_now.time().strftime('%H:%M:%S')
 
+    db.connect()
     db.create_tables([PulseData])
+
     _tmp_Pulses = random.randint(1, 2000)
     exam = PulseData(Date=time_date,
                      Time=time_time,
@@ -86,7 +89,11 @@ def file_write(str_in):
 def db_pulse_write(_date, _time, _count, _litters, _elapsed):
     db.connect()
     db.create_tables([PulseData])
-    pulse = PulseData(Date=_date, Time=_time, Pulses=_count, Litters=_litters, elapsed=_elapsed)
+    pulse = PulseData(Date=_date,
+                      Time=_time,
+                      Pulses=_count,
+                      Litters=_litters,
+                      elapsed=_elapsed)
     pulse.save()
     db.close()
     pass
