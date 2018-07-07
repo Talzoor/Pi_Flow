@@ -23,7 +23,7 @@ db = SqliteDatabase('{}/Readings.db'.format(SCRIPT_PATH)
 
 class PulseData(Model):
     # can_delete = True
-    column_default_sort = [['Date', False], ['Time', False]]
+    column_default_sort = [['Date', True], ['Time', True]]
     Date = DateField()
     Time = TimeField()
     Pulses = IntegerField()
