@@ -6,8 +6,13 @@ from datetime import datetime
 import sys
 import os
 from peewee import *
+#import init
+#from flask_peewee.admin import ModelAdmin
+
+
 import argparse
 import random
+import models
 
 
 SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -16,6 +21,7 @@ FULL_FILE_NAME = '{}/{}'.format(SCRIPT_PATH, FILE_NAME)
 FLOW_PIN = 14
 CONST_mL_P = 1.385
 
+#db = models.Database
 
 db = SqliteDatabase('{}/Readings.db'.format(SCRIPT_PATH)
                     , check_same_thread=False)
@@ -23,25 +29,34 @@ db = SqliteDatabase('{}/Readings.db'.format(SCRIPT_PATH)
 
 class PulseData(Model):
     # can_delete = True
-    column_default_sort = ('Date', True)
-    column_sortable_list = (['Date', True], ['Time', False])
-    column_sortable_list = ('Date', 'Time')
+
     Date = DateField()
     Time = TimeField()
     Pulses = IntegerField()
     Litters = FloatField()
     elapsed = TimeField()
 
+    column_list = ('Date', 'Time', 'Litters')
+    column_default_sort = ('Litters', True)
+    column_sortable_list = (['Litters', True], ['Time', False])
+    column_sortable_list = ('Litters', 'Time')
+
     class Meta:
         database = db
+
+
+
 
 #global pulse_count, time_now, time_start, pulse_flag
 
 
 def init_db():
+    #database_name = db.field_types
+    #print('db::{}'.format(database_name))
     res = db.connect()
     print('DB connection:{}'.format(res))
     db.close()
+    pass
 
 
 def init_vars():
@@ -65,16 +80,18 @@ def db_write_record():
     time_date = _time_now.date()
     time_time = _time_now.time().strftime('%H:%M:%S')
 
-    db.connect()
-    db.create_tables([PulseData])
+#    db.connect()
 
+    #db.create_tables([models.PulseData])
+    models.PulseData.create_table()
     _tmp_Pulses = random.randint(1, 2000)
-    exam = PulseData(Date=time_date,
-                     Time=time_time,
-                     Pulses=_tmp_Pulses,
-                     Litters=round(float(_tmp_Pulses) * CONST_mL_P * 0.001, 3),
-                     elapsed='00:99:99')
-    exam.save()
+    new_exam = models.PulseData(Date=time_date,
+                                Time=time_time,
+                                Pulses=_tmp_Pulses,
+                                Litters=round(float(_tmp_Pulses) * CONST_mL_P * 0.001, 3),
+                                elapsed='00:99:99')
+
+    #new_exam.save()
 
     print('example saved!')
     pass
@@ -200,6 +217,7 @@ def main():
     finally:
         GPIO.cleanup()  # this ensures a clean exit
         db.close()
+        print("---Exit ({})---".format(datetime.now().strftime('%Y-%m-%d  %H:%M:%S')))
 
 
 if __name__ == '__main__':
